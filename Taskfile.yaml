@@ -1,0 +1,29 @@
+# Taskfile.dev
+version: '3'
+
+tasks:
+  docker-build:
+    desc: Build the opslevel-pd-sender docker image. (Any OS)
+    cmds:
+      - docker build -t opslevel-pd-sender . 
+  docker-run:
+    desc: Run the opslevel-pd-sender docker image. (Any OS)
+    cmds:
+      - docker rm -f opslevel-pd-sender || true
+      - docker run -d --name opslevel-pd-sender opslevel-pd-sender:latest "$OPSLEVEL_CE_TOKEN" "$PD_API_TOKEN"
+  send-pagerduty-payload:
+    desc: Besure to add your exports.
+    cmds:
+      - ./send_pagerduty_payload.sh $OPSLEVEL_CE_TOKEN $PD_API_TOKEN
+  update-opslevel-check:
+    desc: Update the OpsLevel check. (Requires CLI/TOKEN)
+    cmds:
+      -  opslevel create filter -f ./configs/opslevel/opslevel-pagerduty-escalations-check.yaml
+  get-checks:
+    desc: Get all OpsLevel checks. (Requires CLI/TOKEN)
+    cmds:
+      - opslevel list check
+  get-services:
+    desc: Get all OpsLevel checks. (Requires CLI/TOKEN)
+    cmds:
+      - opslevel list service
