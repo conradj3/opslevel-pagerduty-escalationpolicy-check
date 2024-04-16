@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: opslevel
+  namespace: opslevel-cronjobs
+type: Opaque
+data:
+  # Enter your OpsLevel Custom Event GUID
+  token: "eW91ci1zZWNyZXQtdmFsdWU="
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pagerduty
+  namespace: opslevel-cronjobs
+type: Opaque
+data:
+  # Enter your PagerDuty API KEY
+  token: "eW91ci1zZWNyZXQtdmFsdWU="
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: opslevel-cronjob
+  namespace: opslevel-cronjobs
+  labels:
+    app: opslevel-cronjob
+    tier: backend
+    track: development
+spec:
+  schedule: "0 0 * * 0"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: opslevel-pagerduty-sender
+            image: opslevel-pd-sender:latest
+            imagePullPolicy: IfNotPresent
+            args:
+            - "$(ARG1)"
+            - "$(ARG2)"
+            env:
+            - name: ARG1
+              valueFrom:
+                secretKeyRef:
+                  name: opslevel
+                  key: token
+            - name: ARG2
+              valueFrom:
+                secretKeyRef:
+                  name: pagerduty
+                  key: token
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                - ALL
+          restartPolicy: OnFailure
+
+
+
