@@ -1,0 +1,4 @@
+/notes
+/helpers/set_auth.sh
+log.txt
+/configs/kubernetes/s-opslevel-pd-cronjob.yaml
