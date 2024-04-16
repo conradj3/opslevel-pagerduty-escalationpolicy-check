@@ -1,0 +1,42 @@
+---
+version: 1
+kind: generic
+spec:
+  name: PagerDuty Escalation Policy Missing Team
+  serviceSelector: ".messages[]| .name"
+  successCondition: ".messages[] |  select(.name == $ctx.alias) | .escalation_policy.teams
+    | length > 0"
+  message: |+
+    {% if check.passed %}
+      ### Check Passed
+      Your Service **{{ data.messages[ctx.index].name }}** has been verified in **PagerDuty** Services and meets the compliance requirement of having an `Escalation Policy` with an assigned team.
+
+      - Direct [link]({{ data.messages[ctx.index].html_url }}) to the `PagerDuty Service`.
+      - Direct [link]({{ data.messages[ctx.index].escalation_policy.html_url }}) to the `PagerDuty Escalation Policy`.
+
+    {% else %}
+      ### Check Failed
+      Your service **{{ data.messages[ctx.index].name }}** has a misconfigured  `escalation policy` in PagerDuty.
+
+      - Direct [link]({{ data.messages[ctx.index].html_url }}) to the `PagerDuty Service`.
+      - Direct [link]({{ data.messages[ctx.index].escalation_policy.html_url }}) to the `PagerDuty Escalation Policy`.
+
+    {% endif %}
+
+  samplePayload: '{"messages":[{"id":"PTPQEDM","name":"(Sample) Mobile App","self":"https://api.pagerduty.com/services/PTPQEDM","type":"service","teams":[{"id":"P66WHU6","self":"https://api.pagerduty.com/teams/P66WHU6","type":"team_reference","summary":"(Sample)
+    Order Management Team","html_url":"https://dev-nov4io.pagerduty.com/teams/P66WHU6"}],"addons":[],"status":"active","summary":"(Sample)
+    Mobile App","html_url":"https://dev-nov4io.pagerduty.com/service-directory/PTPQEDM","created_at":"2024-03-15T21:38:26-04:00","updated_at":"2024-03-15T21:38:26-04:00","description":"Our
+    mobile app. Find us in any App Store!","integrations":[],"response_play":null,"support_hours":null,"alert_creation":"create_alerts_and_incidents","alert_grouping":null,"escalation_policy":{"id":"PVUHL5V","self":"https://api.pagerduty.com/escalation_policies/PVUHL5V","type":"escalation_policy_reference","summary":"Default","html_url":"https://dev-nov4io.pagerduty.com/escalation_policies/PVUHL5V"},"scheduled_actions":[],"auto_resolve_timeout":null,"incident_urgency_rule":{"type":"constant","urgency":"high"},"alert_grouping_timeout":null,"acknowledgement_timeout":null,"last_incident_timestamp":null,"alert_grouping_parameters":{"type":null,"config":null}}]}'
+  sampleQueryParams: '&alias[]="(Sample) Mobile App"'
+  notes: |
+    **Why Escalation Policies and Team Assignments are Essential**
+
+    Escalation policies with assigned teams are crucial for rapid and effective incident management. Here's why:
+
+    - **Clarity and Accountability:** Assigns clear responsibility, enhancing accountability for incident resolution.
+    - **Expertise Utilization:** Ensures the right team with the right skills is engaged at the right time.
+    - **Improved Coordination:** Facilitates smoother coordination by defining roles and escalation triggers clearly.
+    - **Enhanced Communication:** Promotes better intra and inter-team communication, reducing misunderstandings and delays.
+    - **Monitoring and Improvement:** Allows for performance monitoring and identifying areas for refinement, optimizing the incident response process over time.
+
+    This structured approach not only ensures efficient issue resolution but also supports service reliability, benefiting both the organization and its customers.
