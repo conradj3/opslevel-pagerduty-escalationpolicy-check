@@ -1,5 +1,5 @@
 # Use a specific version of Alpine as a parent image
-FROM alpine:3.19
+FROM alpine:3.20
 
 # Set work directory in the container
 WORKDIR /app
